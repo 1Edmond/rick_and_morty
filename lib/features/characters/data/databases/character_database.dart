@@ -1,4 +1,3 @@
-// lib/features/characters/data/databases/character_database.dart
 
 import 'package:rick_and_morty/features/characters/data/models/character.dart';
 import 'package:sqflite/sqflite.dart';

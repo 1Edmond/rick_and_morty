@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:rick_and_morty/core/constants/api_constants.dart';
 import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
 import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
 import '../models/character.dart';

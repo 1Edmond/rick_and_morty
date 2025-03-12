@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:rick_and_morty/core/configs/app_routes.dart';
+import 'package:rick_and_morty/features/characters/presentation/screens/characters_fav_screens.dart';
 import 'package:rick_and_morty/features/characters/presentation/screens/characters_list_screens.dart';
 import 'package:rick_and_morty/shared/themes/theme_data.dart';
 import 'dependencies_injection.dart' as di;
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       initTheme: initTheme,
       builder: (_, myTheme) {
         return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: myTheme,
           initialRoute: AppRoutes.home,
@@ -57,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _index = 0;
  final pages = [
    CharactersListScreens(),
-   Placeholder(),
+   CharactersFavListScreens(),
   ];
 
   @override
@@ -69,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Dynamique
           color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor ?? Colors.blueAccent,
           items: <Widget>[
-            Icon(Icons.home, size: 30, color: Theme.of(context).iconTheme.color),
-            Icon(Icons.favorite, size: 30, color: Theme.of(context).iconTheme.color),
+            Icon(Icons.home, size: 30, color: Colors.white),
+            Icon(Icons.favorite, size: 30, color: Colors.white),
           ],
           onTap: (index) {
             setState(() {
@@ -80,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         appBar: AppBar(
           title: const Text(
-            'Flutter Demo Home Page',
+            'Rick and Morty',
           ),
         ),
         body: pages[_index],

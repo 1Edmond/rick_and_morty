@@ -1,14 +1,14 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rick_and_morty/features/characters/presentation/controllers/characters_list_screens_controller.dart';
+import 'package:rick_and_morty/features/characters/presentation/interfaces/characters_screem_interface.dart';
 
 
 class CharactersItem extends StatefulWidget {
   CharactersItem({super.key, required this.title, required this.imageUrl,
     required this.characterId,
-    required this.tag, required this.time, this.isAnimationEnable = false });
-  String title, time, imageUrl, tag;
+    required this.tag, required this.time, this.isAnimationEnable = false, this.page = "list"});
+  String title, time, imageUrl, tag, page;
   bool isAnimationEnable;
   final int characterId;
 
@@ -31,7 +31,9 @@ class _CharactersItemState extends State<CharactersItem> {
   @override
   Widget build(BuildContext context) {
 
-    final characterController = Get.find<CharactersListScreensController>();
+    final characterController = Get.find<CharactersScreemInterface>(tag: widget.page);
+
+
     return Stack(
       children: [
 

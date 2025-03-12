@@ -3,8 +3,6 @@ import 'package:rick_and_morty/features/characters/data/models/character_respons
 import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
 import 'package:rick_and_morty/features/characters/domains/repositories/characters_repository.dart';
 
-
-
 class CharactersRepositoryImpl implements CharactersRepository {
   final CharactersRemoteDataSource remoteDataSource;
   final CharactersLocalDataSource localDataSource;
