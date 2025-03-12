@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rick_and_morty/core/constants/api_constants.dart';
+import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
 import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
 import '../models/character.dart';
 
@@ -11,13 +12,16 @@ class CharactersRemoteDataSourceImpl implements CharactersRemoteDataSource {
   CharactersRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<List<CharacterModel>> getAllCharacters() async {
-    final response = await client.get(Uri.parse('${ApiConstants.API_LINK}character'));
+  Future<CharacterResponse> getAllCharacters(String url) async {
+    final response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> results = data['results'];
-      return results.map((character) => CharacterModel.fromJson(character)).toList();
+      var chractere_response = CharacterResponse();
+      chractere_response.nextPage = data['info']['next'];
+      chractere_response.data = results.map((character) => CharacterModel.fromJson(character)).toList();
+      return chractere_response;
     } else {
       throw Exception('Failed to load characters');
     }

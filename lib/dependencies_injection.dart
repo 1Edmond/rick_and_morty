@@ -1,6 +1,5 @@
-// lib/features/characters/di/characters_injection.dart
-
 import 'package:get_it/get_it.dart';
+import 'package:rick_and_morty/features/characters/data/databases/character_database.dart';
 import 'package:rick_and_morty/features/characters/data/repositories/characters_repository_impl.dart';
 import 'package:rick_and_morty/features/characters/data/sources/character_data_source.dart';
 import 'package:rick_and_morty/features/characters/data/sources/character_local_data_source.dart';
@@ -15,8 +14,10 @@ Future<void> init() async  {
 
   getIt.registerLazySingleton<http.Client>(() => http.Client());
 
+  getIt.registerLazySingleton<CharacterDatabase>(() => CharacterDatabase());
+
   getIt.registerLazySingleton<CharactersLocalDataSource>(
-        () => CharactersLocalDataSourceImpl(),
+        () => CharactersLocalDataSourceImpl(getIt<CharacterDatabase>()),
   );
 
   getIt.registerLazySingleton<CharactersRemoteDataSource>(

@@ -1,11 +1,13 @@
+import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
+
 import '../models/character.dart';
 
 
 abstract class CharactersRemoteDataSource {
-  Future<List<CharacterModel>> getAllCharacters();
+  Future<CharacterResponse> getAllCharacters(String url);
 }
 
 abstract class CharactersLocalDataSource {
-  Future<List<CharacterModel>> getCachedCharacters();
+  Future<CharacterResponse> getCachedCharacters();
   Future<void> cacheCharacters(List<CharacterModel> characters);
 }

@@ -1,105 +1,107 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:rick_and_morty/core/configs/app_routes.dart';
+import 'package:rick_and_morty/features/characters/presentation/screens/characters_list_screens.dart';
+import 'package:rick_and_morty/shared/themes/theme_data.dart';
 import 'dependencies_injection.dart' as di;
+import 'package:flutter/scheduler.dart' show timeDilation;
 
+var isDarkMode = false;
 
 void main() async  {
 
   WidgetsFlutterBinding.ensureInitialized();
+  timeDilation = 3.0;
   await di.init();
+  await GetStorage.init();
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    final _box = GetStorage();
+    final initTheme = _box.read("isDarkMode") != null ?
+    _box.read("isDarkMode") as bool ? darkTheme : lightTheme : lightTheme;
+    isDarkMode = initTheme == darkTheme ;
+    return ThemeProvider(
+      initTheme: initTheme,
+      builder: (_, myTheme) {
+        return GetMaterialApp(
+          title: 'Flutter Demo',
+          theme: myTheme,
+          initialRoute: AppRoutes.home,
+          getPages: AppRoutes.pages,
+        );
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  int _index = 0;
+ final pages = [
+   CharactersListScreens(),
+   Placeholder(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+    final _box = GetStorage();
+    return ThemeSwitchingArea(
+      child: Scaffold(
+        bottomNavigationBar: CurvedNavigationBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Dynamique
+          color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor ?? Colors.blueAccent,
+          items: <Widget>[
+            Icon(Icons.home, size: 30, color: Theme.of(context).iconTheme.color),
+            Icon(Icons.favorite, size: 30, color: Theme.of(context).iconTheme.color),
           ],
+          onTap: (index) {
+            setState(() {
+              _index = index;
+            });
+          },
+        ),
+        appBar: AppBar(
+          title: const Text(
+            'Flutter Demo Home Page',
+          ),
+        ),
+        body: pages[_index],
+        floatingActionButton: ThemeSwitcher.withTheme(
+          builder: (_, switcher, theme) {
+            return FloatingActionButton(
+              onPressed: () {
+                _box.write('isDarkMode', !isDarkMode);
+                return switcher.changeTheme(
+                theme: theme.brightness == Brightness.light
+                    ? darkTheme
+                    : lightTheme,
+                );
+                },
+              child: Icon(theme.brightness == Brightness.light
+                  ? Icons.brightness_3
+                  : Icons.wb_sunny),
+            );
+          },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

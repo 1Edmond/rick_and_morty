@@ -1,5 +1,6 @@
-import 'package:rick_and_morty/features/characters/data/models/character.dart';
+import 'package:rick_and_morty/features/characters/data/models/character_response.dart';
+
 
 abstract class CharactersRepository {
-  Future<List<CharacterModel>> getAllCharacters();
+  Future<CharacterResponse> getAllCharacters(String url);
 }
